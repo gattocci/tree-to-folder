@@ -10,13 +10,13 @@ export function activate(context: vscode.ExtensionContext) {
     'tree-to-folder.generateFromTree',
     async (uri: vscode.Uri) => {
       try {
-        // Get the target directory
+        // Encuentra el directorio objetivo
         const targetPath = await getTargetPath(uri);
         if (!targetPath) {
           return;
         }
 
-        // Ask user how they want to input the tree
+        // Pregunta al usuario cómo quiere ingresar el árbol
         const inputMethod = await vscode.window.showQuickPick(
           ['Open in editor (recommended)', 'Quick input box (single line only)'],
           { placeHolder: 'How would you like to input the tree structure?' }
@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         let finalTreeText: string;
 
         if (inputMethod === 'Open in editor (recommended)') {
-          // Create a new untitled document
+          // Crea un nuevo documento sin título
           const doc = await vscode.workspace.openTextDocument({
             content: '# Paste your tree structure below, then click "Generate" in the notification\n\n',
             language: 'plaintext'
@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext) {
           
           const editor = await vscode.window.showTextDocument(doc);
           
-          // Wait for user to confirm (NON-MODAL so they can edit)
+          // Espera a que el usuario haga clic en "Generate"
           const result = await vscode.window.showInformationMessage(
             'Paste your tree structure in the editor, then click "Generate"',
             'Generate',
@@ -48,14 +48,14 @@ export function activate(context: vscode.ExtensionContext) {
             return;
           }
 
-          // Get the text from the document
+          // Obtiene el texto del documento
           finalTreeText = doc.getText();
           
-          // Remove the instruction comment if it's still there
+          // Elimina la línea de instrucción si está presente
           finalTreeText = finalTreeText.replace(/^#.*\n\n/, '');
           
         } else {
-          // Use input box (limited to single line)
+          // Usa el cuadro de entrada rápido
           const treeText = await vscode.window.showInputBox({
             prompt: 'Paste your directory tree structure (WARNING: Multi-line will be collapsed)',
             placeHolder: 'Example: src/components/Button.tsx',
@@ -80,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        // Parse the tree
+        // Esparce
         const parser = new TreeParser();
         const tree = parser.parse(finalTreeText);
         const paths = parser.toPaths(tree, targetPath);
@@ -90,7 +90,7 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        // Show preview
+        // Muestra una vista previa y pide confirmación
         const preview = paths.map(p => 
           `${p.isFile ? '📄' : '📁'} ${path.relative(targetPath, p.path)}`
         ).join('\n');
@@ -106,14 +106,14 @@ export function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        // Create the structure
+        // Crea la estructura de archivos y carpetas
         await createStructure(paths);
 
         vscode.window.showInformationMessage(
           `✅ Successfully created ${paths.length} items!`
         );
 
-        // Refresh explorer
+        // Refresca el explorador de archivos
         vscode.commands.executeCommand('workbench.files.action.refreshFilesExplorer');
 
       } catch (error) {
@@ -128,7 +128,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function getTargetPath(uri?: vscode.Uri): Promise<string | undefined> {
-  // If right-clicked on a folder, use that
+  // Si hace clic derecho en una carpeta o archivo, se usa
   if (uri && fs.existsSync(uri.fsPath)) {
     const stat = fs.statSync(uri.fsPath);
     if (stat.isDirectory()) {
@@ -137,7 +137,7 @@ async function getTargetPath(uri?: vscode.Uri): Promise<string | undefined> {
     return path.dirname(uri.fsPath);
   }
 
-  // Otherwise use workspace root
+  // O usamos la carpeta de trabajo abierta
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders || workspaceFolders.length === 0) {
     vscode.window.showErrorMessage('Please open a workspace first');
@@ -148,7 +148,7 @@ async function getTargetPath(uri?: vscode.Uri): Promise<string | undefined> {
     return workspaceFolders[0].uri.fsPath;
   }
 
-  // Multiple workspace folders - let user choose
+  // Multiple workspace folders
   const selected = await vscode.window.showQuickPick(
     workspaceFolders.map(folder => ({
       label: folder.name,
@@ -164,17 +164,17 @@ async function getTargetPath(uri?: vscode.Uri): Promise<string | undefined> {
 async function createStructure(paths: Array<{path: string, isFile: boolean}>): Promise<void> {
   for (const item of paths) {
     if (item.isFile) {
-      // Create parent directories if needed
+      // Crea directorio padre
       const dir = path.dirname(item.path);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      // Create file
+      // Crea archivo
       if (!fs.existsSync(item.path)) {
         fs.writeFileSync(item.path, '', 'utf8');
       }
     } else {
-      // Create directory
+      // Crea carpeta
       if (!fs.existsSync(item.path)) {
         fs.mkdirSync(item.path, { recursive: true });
       }
