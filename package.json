@@ -1,0 +1,62 @@
+{
+  "name": "tree-to-folder",
+  "displayName": "Tree to Folder",
+  "description": "Convert text-based directory trees into real folder structures",
+  "version": "1.0.0",
+  "publisher": "gattocci",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "tree",
+    "folder",
+    "directory",
+    "structure",
+    "generator"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "tree-to-folder.generateFromTree",
+        "title": "Generate from Tree"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "tree-to-folder.generateFromTree",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "@types/vscode": "^1.75.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^2.32.0",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gattocci/tree-to-folder.git"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "author": "gattocci",
+  "homepage": "https://github.com/gattocci/tree-to-folder#readme"
+}
