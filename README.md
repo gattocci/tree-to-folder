@@ -36,3 +36,38 @@ If you think, “Yes, if I put three completely different trees with different c
 You don't have to think too much about it. Just copy paste the tree and generate.
 
 Not perfect but enough.
+
+## Manual Installation
+Just follow this simple tutorial if you not found this plugin in the Extensions Marketplace (This assume that you actually are inside a folder while using VS Code);
+
+#### 1. Prerequisites
+Ensure you have Node.js installed, then install the VS Code Extension Manager globally:
+
+
+```bash
+npm install -g @vscode/vsce
+```
+
+#### 2. Build the Extension
+Clone the repository and generate the installation package:
+
+```bash
+git clone https://github.com/gattocci/tree-to-folder.git
+cd tree-to-folder
+npm install
+npm run compile
+vsce package
+```
+#### 3. Install to VS Code
+After running the commands above, a file named tree-to-folder-1.0.0.vsix will be created in your folder. To install it:
+
+Via UI: Open VS Code, go to the Extensions view (Ctrl+Shift+X), click the "..." (Views and More Actions) at the top right, select Install from VSIX..., and choose the generated file.
+
+Via Terminal: Run the following command:
+
+```bash
+code --install-extension tree-to-folder-1.0.0.vsix
+```
+
+Or directly download the extension inside VS code!
+--not yet--
