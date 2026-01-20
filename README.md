@@ -1,8 +1,10 @@
 Hello, boss! This is:
 
+![Demo](media/demo.gif)
+
 ## Tree-to-Folder Generator
 
-![Demo](media/demo.gif)
+![Demo](media/icon.png)
 
   This VS Code extension transforms plain text directory schemas into real project structures with a single click.
 
